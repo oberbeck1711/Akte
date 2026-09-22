@@ -3,376 +3,900 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Arstotzka Aktenverwaltung</title>
+<title>Arstotzka Republik | Internes Aktenregister</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <style>
 
-        body {
+<style>
 
-            margin: 0;
+/* ================================================= */
+/* GRUNDLAYOUT                                       */
+/* ================================================= */
 
-            font-family: Arial, Helvetica, sans-serif;
+* {
+    box-sizing: border-box;
+}
 
-            background: #1b1b1b;
+html {
+    scroll-behavior: smooth;
+}
 
-            color: #222;
+body {
+    margin: 0;
+    background:
+        radial-gradient(circle at top, #333 0%, #171717 45%, #0d0d0d 100%);
+    color: #222;
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-        }
 
+/* ================================================= */
+/* LOGIN                                             */
+/* ================================================= */
 
-        /* ========================= */
-        /* LOGIN                     */
-        /* ========================= */
+#login {
+    min-height: 100vh;
 
-        #login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-            width: 400px;
+    padding: 20px;
+}
 
-            margin: 100px auto;
+.login-box {
+    width: 440px;
+    max-width: 100%;
 
-            background: #e8e4d8;
+    background: #e7e2d4;
 
-            padding: 30px;
+    border: 4px solid #292929;
 
-            border: 5px solid #333;
+    box-shadow:
+        0 0 0 2px #777,
+        0 20px 60px rgba(0,0,0,.7);
 
-            box-shadow: 0 0 20px black;
+    padding: 35px;
 
-            text-align: center;
+    text-align: center;
+}
 
-        }
+.login-box img {
+    width: 190px;
+    max-width: 70%;
 
+    margin-bottom: 20px;
+}
 
-        #login img {
+.login-box h1 {
+    margin: 0 0 8px 0;
 
-            width: 180px;
+    font-size: 25px;
 
-            margin-bottom: 20px;
+    letter-spacing: 1px;
+}
 
-        }
+.login-subtitle {
+    color: #555;
 
+    font-size: 13px;
 
-        #login h1 {
+    margin-bottom: 30px;
+}
 
-            font-size: 24px;
+.login-warning {
+    margin-top: 20px;
 
-            margin-bottom: 25px;
+    padding: 10px;
 
-        }
+    background: #d4cfc0;
 
+    border-left: 4px solid #8b0000;
 
-        input,
-        select {
+    font-size: 12px;
 
-            width: 100%;
+    text-align: left;
+}
 
-            box-sizing: border-box;
+#error {
+    color: #8b0000;
 
-            padding: 10px;
+    font-weight: bold;
 
-            margin-top: 5px;
+    margin-top: 15px;
+}
 
-            margin-bottom: 15px;
 
-            border: 2px solid #555;
+/* ================================================= */
+/* INPUTS                                            */
+/* ================================================= */
 
-            background: #f5f2e8;
+input,
+select,
+textarea {
 
-            font-size: 15px;
+    width: 100%;
 
-        }
+    padding: 12px;
 
+    margin-top: 6px;
+    margin-bottom: 15px;
 
-        button {
+    border: 2px solid #888;
 
-            padding: 10px 15px;
+    background: #faf8f0;
 
-            border: 2px solid #333;
+    color: #222;
 
-            background: #555;
+    font-family: inherit;
 
-            color: white;
+    font-size: 15px;
 
-            cursor: pointer;
+}
 
-            font-weight: bold;
+textarea {
+    min-height: 110px;
 
-        }
+    resize: vertical;
+}
 
+input:focus,
+select:focus,
+textarea:focus {
 
-        button:hover {
+    outline: none;
 
-            background: #333;
+    border-color: #8b0000;
 
-        }
+}
 
 
-        #error {
+/* ================================================= */
+/* BUTTONS                                           */
+/* ================================================= */
 
-            color: #8b0000;
+button {
 
-            font-weight: bold;
+    border: 2px solid #222;
 
-            margin-top: 15px;
+    background: #4a4a4a;
 
-        }
+    color: white;
 
+    padding: 11px 15px;
 
-        /* ========================= */
-        /* SYSTEM                    */
-        /* ========================= */
+    cursor: pointer;
 
-        #system {
+    font-weight: bold;
 
-            display: none;
+    font-size: 14px;
 
-        }
+    transition: .15s;
 
+}
 
-        .topbar {
+button:hover {
 
-            background: #252525;
+    background: #222;
 
-            color: white;
+}
 
-            padding: 15px 25px;
+button.danger {
 
-            border-bottom: 4px solid #8b0000;
+    background: #7b0000;
 
-            display: flex;
+}
 
-            justify-content: space-between;
+button.danger:hover {
 
-            align-items: center;
+    background: #a00000;
 
-        }
+}
 
+button.secondary {
 
-        .topbar h2 {
+    background: #777;
 
-            margin: 0;
+}
 
-        }
+button.small {
 
+    padding: 7px 10px;
 
-        .topbar span {
+    font-size: 12px;
 
-            font-size: 13px;
+}
 
-            color: #ccc;
 
-        }
+/* ================================================= */
+/* SYSTEM                                            */
+/* ================================================= */
 
+#system {
 
-        .container {
+    display: none;
 
-            display: flex;
+    min-height: 100vh;
 
-            min-height: calc(100vh - 70px);
+}
 
-        }
 
+/* ================================================= */
+/* TOPBAR                                            */
+/* ================================================= */
 
-        /* ========================= */
-        /* SIDEBAR                   */
-        /* ========================= */
+.topbar {
 
-        .sidebar {
+    min-height: 70px;
 
-            width: 220px;
+    background:
+        linear-gradient(#292929, #1c1c1c);
 
-            background: #292929;
+    color: white;
 
-            padding: 20px;
+    border-bottom: 4px solid #8b0000;
 
-            box-sizing: border-box;
+    display: flex;
 
-        }
+    align-items: center;
 
+    justify-content: space-between;
 
-        .sidebar button {
+    padding: 12px 25px;
 
-            width: 100%;
+}
 
-            margin-bottom: 10px;
+.topbar-title {
 
-            text-align: left;
+    display: flex;
 
-        }
+    align-items: center;
 
+    gap: 15px;
 
-        /* ========================= */
-        /* CONTENT                   */
-        /* ========================= */
+}
 
-        .content {
+.topbar-title strong {
 
-            flex: 1;
+    font-size: 20px;
 
-            padding: 30px;
+    letter-spacing: 1px;
 
-            background: #c9c5b8;
+}
 
-            min-height: calc(100vh - 70px);
+.topbar-title span {
 
-            box-sizing: border-box;
+    font-size: 11px;
 
-        }
+    color: #aaa;
 
+}
 
-        .document {
+.top-status {
 
-            max-width: 900px;
+    font-size: 11px;
 
-            margin: auto;
+    color: #bdbdbd;
 
-            background: #eee9da;
+    text-align: right;
 
-            padding: 30px;
+}
 
-            border: 3px solid #333;
+.status-dot {
 
-            box-shadow: 0 0 10px #555;
+    display: inline-block;
 
-        }
+    width: 8px;
 
+    height: 8px;
 
-        .document h1 {
+    background: #48a348;
 
-            margin-top: 0;
+    border-radius: 50%;
 
-            border-bottom: 3px solid #333;
+    margin-right: 5px;
 
-            padding-bottom: 10px;
+}
 
-        }
 
+/* ================================================= */
+/* LAYOUT                                            */
+/* ================================================= */
 
-        .document h2 {
+.container {
 
-            margin-top: 30px;
+    display: flex;
 
-            border-bottom: 2px solid #555;
+    min-height: calc(100vh - 70px);
 
-            padding-bottom: 5px;
+}
 
-        }
 
+/* ================================================= */
+/* SIDEBAR                                           */
+/* ================================================= */
 
-        .document h3 {
+.sidebar {
 
-            margin-top: 0;
+    width: 240px;
 
-        }
+    flex-shrink: 0;
 
+    background: #242424;
 
-        .field {
+    padding: 18px;
 
-            background: #f7f3e8;
+}
 
-            border: 1px solid #999;
+.sidebar-header {
 
-            padding: 15px;
+    color: #aaa;
 
-            margin: 10px 0;
+    font-size: 11px;
 
-        }
+    letter-spacing: 1px;
 
+    margin: 8px 5px 12px;
 
-        .field button {
+}
 
-            margin-top: 10px;
+.sidebar button {
 
-        }
+    display: block;
 
+    width: 100%;
 
-        .warning {
+    text-align: left;
 
-            color: #8b0000;
+    margin-bottom: 8px;
 
-            font-weight: bold;
+}
 
-        }
+.sidebar .logout {
 
+    margin-top: 30px;
 
-        .success {
+    background: #6d0000;
 
-            color: #176b17;
+}
 
-            font-weight: bold;
 
-        }
+/* ================================================= */
+/* CONTENT                                           */
+/* ================================================= */
 
+.content {
 
-        /* ========================= */
-        /* PERSONENLISTE              */
-        /* ========================= */
+    flex: 1;
 
-        .person-button {
+    min-width: 0;
 
-            width: 100%;
+    background: #bdb9ad;
 
-            text-align: left;
+    padding: 30px;
 
-            background: #555;
+}
 
-            padding: 15px;
+.document {
 
-            font-size: 16px;
+    max-width: 1100px;
 
-        }
+    margin: 0 auto;
 
+    background: #eae5d8;
 
-        .person-button:hover {
+    border: 3px solid #333;
 
-            background: #333;
+    box-shadow: 0 8px 20px rgba(0,0,0,.35);
 
-        }
+    padding: 30px;
 
+}
 
-        /* ========================= */
-        /* MOBILE                    */
-        /* ========================= */
+.document-header {
 
-        @media (max-width: 700px) {
+    border-bottom: 3px solid #333;
 
-            #login {
+    margin-bottom: 25px;
 
-                width: 90%;
+}
 
-                box-sizing: border-box;
+.document-header h1 {
 
-            }
+    margin: 0 0 6px;
 
+    font-size: 27px;
 
-            .container {
+}
 
-                flex-direction: column;
+.document-header p {
 
-            }
+    margin-top: 0;
 
+    color: #666;
 
-            .sidebar {
+}
 
-                width: 100%;
 
-            }
+/* ================================================= */
+/* CARDS                                             */
+/* ================================================= */
 
+.dashboard-grid {
 
-            .content {
+    display: grid;
 
-                padding: 15px;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
 
-            }
+    gap: 15px;
 
-        }
+    margin-bottom: 25px;
 
-    </style>
+}
+
+.stat-card {
+
+    background: #f4f0e5;
+
+    border: 2px solid #999;
+
+    padding: 18px;
+
+}
+
+.stat-title {
+
+    font-size: 11px;
+
+    color: #666;
+
+    text-transform: uppercase;
+
+}
+
+.stat-number {
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    margin-top: 7px;
+
+}
+
+
+/* ================================================= */
+/* FIELD                                             */
+/* ================================================= */
+
+.field {
+
+    background: #f6f2e7;
+
+    border: 1px solid #999;
+
+    padding: 16px;
+
+    margin-bottom: 12px;
+
+}
+
+.field-title {
+
+    font-size: 12px;
+
+    color: #666;
+
+    text-transform: uppercase;
+
+    margin-bottom: 5px;
+
+}
+
+.field-value {
+
+    font-weight: bold;
+
+}
+
+
+/* ================================================= */
+/* PERSONEN                                          */
+/* ================================================= */
+
+.person-list {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+}
+
+.person-card {
+
+    background: #f6f2e7;
+
+    border: 2px solid #999;
+
+    padding: 15px;
+
+    cursor: pointer;
+
+    transition: .15s;
+
+}
+
+.person-card:hover {
+
+    border-color: #8b0000;
+
+    transform: translateY(-1px);
+
+}
+
+.person-name {
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+}
+
+.person-id {
+
+    margin-top: 5px;
+
+    color: #777;
+
+    font-size: 12px;
+
+}
+
+
+/* ================================================= */
+/* BADGES                                            */
+/* ================================================= */
+
+.badge {
+
+    display: inline-block;
+
+    padding: 5px 8px;
+
+    margin: 3px;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    border: 1px solid #555;
+
+    background: #ddd8ca;
+
+}
+
+.badge-danger {
+
+    background: #b88;
+
+    color: #4b0000;
+
+}
+
+.badge-warning {
+
+    background: #d7c78c;
+
+}
+
+.badge-success {
+
+    background: #a9c0a9;
+
+}
+
+
+/* ================================================= */
+/* SEARCH                                            */
+/* ================================================= */
+
+.search-box {
+
+    margin-bottom: 20px;
+
+}
+
+.search-box input {
+
+    margin-bottom: 0;
+
+}
+
+
+/* ================================================= */
+/* FAHNDUNG                                          */
+/* ================================================= */
+
+.fahndung-card {
+
+    border-left: 7px solid #8b0000;
+
+    background: #eee8db;
+
+    border-top: 1px solid #999;
+
+    border-right: 1px solid #999;
+
+    border-bottom: 1px solid #999;
+
+    padding: 18px;
+
+    margin-bottom: 15px;
+
+}
+
+.fahndung-card h3 {
+
+    margin: 0 0 10px;
+
+}
+
+.fahndung-meta {
+
+    font-size: 12px;
+
+    color: #666;
+
+    margin-bottom: 12px;
+
+}
+
+
+/* ================================================= */
+/* AKTENHISTORIE                                     */
+/* ================================================= */
+
+.history {
+
+    border-left: 3px solid #555;
+
+    padding-left: 15px;
+
+}
+
+.history-entry {
+
+    margin-bottom: 15px;
+
+    position: relative;
+
+}
+
+.history-entry::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: -21px;
+
+    top: 3px;
+
+    width: 9px;
+
+    height: 9px;
+
+    background: #555;
+
+    border-radius: 50%;
+
+}
+
+.history-date {
+
+    font-size: 11px;
+
+    color: #777;
+
+}
+
+
+/* ================================================= */
+/* WARNUNG                                           */
+/* ================================================= */
+
+.warning-box {
+
+    background: #ded4c0;
+
+    border-left: 6px solid #8b0000;
+
+    padding: 15px;
+
+    margin-bottom: 20px;
+
+}
+
+.warning-box strong {
+
+    color: #720000;
+
+}
+
+
+/* ================================================= */
+/* MOBILE NAVIGATION                                 */
+/* ================================================= */
+
+.mobile-menu {
+
+    display: none;
+
+    width: 100%;
+
+    background: #242424;
+
+    padding: 10px;
+
+}
+
+.mobile-menu button {
+
+    width: 100%;
+
+}
+
+
+/* ================================================= */
+/* RESPONSIVE                                        */
+/* ================================================= */
+
+@media (max-width: 900px) {
+
+    .dashboard-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .topbar {
+
+        padding: 12px 15px;
+
+    }
+
+    .topbar-title strong {
+
+        font-size: 15px;
+
+    }
+
+    .topbar-title span {
+
+        display: none;
+
+    }
+
+    .top-status {
+
+        font-size: 9px;
+
+    }
+
+    .container {
+
+        flex-direction: column;
+
+    }
+
+    .sidebar {
+
+        display: none;
+
+    }
+
+    .mobile-menu {
+
+        display: block;
+
+    }
+
+    .content {
+
+        padding: 12px;
+
+    }
+
+    .document {
+
+        padding: 18px;
+
+    }
+
+    .person-list {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .dashboard-grid {
+
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+    .document-header h1 {
+
+        font-size: 21px;
+
+    }
+
+}
+
+@media (max-width: 450px) {
+
+    .dashboard-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .login-box {
+
+        padding: 22px;
+
+    }
+
+}
+
+
+/* ================================================= */
+/* DRUCK                                             */
+/* ================================================= */
+
+@media print {
+
+    .sidebar,
+    .mobile-menu,
+    .topbar {
+
+        display: none !important;
+
+    }
+
+    .content {
+
+        padding: 0;
+
+        background: white;
+
+    }
+
+    .document {
+
+        box-shadow: none;
+
+        border: none;
+
+    }
+
+}
+
+</style>
 
 </head>
 
@@ -380,60 +904,116 @@
 <body>
 
 
-<!-- ========================= -->
-<!-- LOGIN                     -->
-<!-- ========================= -->
+<!-- ================================================= -->
+<!-- LOGIN                                             -->
+<!-- ================================================= -->
 
 <div id="login">
 
-    <img src="Arstotzka.png" alt="Glory to Arstotzka">
+    <div class="login-box">
 
-    <h1>
-        DIE AKTE DER ARSTOTZKA REPUBLIK
-    </h1>
+        <img
+            src="Arstotzka.png"
+            alt="Arstotzka"
+        >
 
+        <h1>
+            REPUBLIK ARSTOTZKA
+        </h1>
 
-    <input
-        type="text"
-        id="username"
-        placeholder="Benutzername"
-    >
-
-
-    <input
-        type="password"
-        id="password"
-        placeholder="Passwort"
-    >
+        <div class="login-subtitle">
+            INTERNES AKTENVERWALTUNGSSYSTEM
+        </div>
 
 
-    <button onclick="login()">
-        ANMELDEN
-    </button>
+        <input
+            id="username"
+            type="text"
+            placeholder="Benutzername"
+            autocomplete="username"
+        >
 
 
-    <div id="error"></div>
+        <input
+            id="password"
+            type="password"
+            placeholder="Passwort"
+            autocomplete="current-password"
+        >
+
+
+        <button
+            style="width:100%;"
+            onclick="login()"
+        >
+            ZUGANG ZUM SYSTEM
+        </button>
+
+
+        <div id="error"></div>
+
+
+        <div class="login-warning">
+
+            <strong>ACHTUNG</strong><br><br>
+
+            Dieses System ist Eigentum der
+            Republik Arstotzka.
+
+            Unbefugter Zugriff wird protokolliert.
+
+        </div>
+
+    </div>
 
 </div>
 
 
 
-<!-- ========================= -->
-<!-- SYSTEM                    -->
-<!-- ========================= -->
+<!-- ================================================= -->
+<!-- SYSTEM                                            -->
+<!-- ================================================= -->
 
 <div id="system">
 
 
     <div class="topbar">
 
-        <h2>
-            ARSTOTZKA REPUBLIK
-        </h2>
+        <div class="topbar-title">
 
-        <span>
-            INTERNES AKTENSYSTEM
-        </span>
+            <strong>
+                ARSTOTZKA
+            </strong>
+
+            <span>
+                INTERNES AKTENREGISTER
+            </span>
+
+        </div>
+
+
+        <div class="top-status">
+
+            <span class="status-dot"></span>
+            SYSTEM ONLINE
+
+            <br>
+
+            INTERN
+
+        </div>
+
+    </div>
+
+
+
+    <!-- MOBILE MENU -->
+
+    <div class="mobile-menu">
+
+        <button onclick="zeigeStartseite()">
+            ☰ MENÜ / STARTSEITE
+        </button>
 
     </div>
 
@@ -442,67 +1022,69 @@
     <div class="container">
 
 
-        <!-- ========================= -->
-        <!-- SIDEBAR                   -->
-        <!-- ========================= -->
+        <!-- ================================================= -->
+        <!-- SIDEBAR                                           -->
+        <!-- ================================================= -->
 
-        <div class="sidebar">
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+                HAUPTMENÜ
+            </div>
 
 
             <button onclick="zeigeStartseite()">
-                STARTSEITE
+                ▣ STARTSEITE
             </button>
 
 
             <button onclick="zeigePersonen()">
-                PERSONENAKTEN
+                ▤ PERSONENAKTEN
             </button>
 
 
             <button onclick="zeigeFahndung()">
-                FAHNDUNG
+                ⚠ FAHNDUNG
             </button>
 
 
-            <button onclick="logout()">
-                ABMELDEN
-            </button>
-
-
-        </div>
-
-
-
-        <!-- ========================= -->
-        <!-- CONTENT                   -->
-        <!-- ========================= -->
-
-        <div class="content" id="content">
-
-
-            <div class="document">
-
-                <h1>
-                    WILLKOMMEN
-                </h1>
-
-                <p>
-                    Willkommen im internen Aktenverwaltungssystem
-                    der Republik Arstotzka.
-                </p>
-
-                <p>
-                    Wählen Sie links einen Bereich aus.
-                </p>
-
+            <div class="sidebar-header">
+                SYSTEM
             </div>
 
 
-        </div>
+            <button onclick="zeigeStatistik()">
+                ▦ STATISTIK
+            </button>
+
+
+            <button onclick="window.print()">
+                ▣ AKTE DRUCKEN
+            </button>
+
+
+            <button
+                class="logout"
+                onclick="logout()"
+            >
+                ABMELDEN
+            </button>
+
+        </aside>
+
+
+
+        <!-- ================================================= -->
+        <!-- CONTENT                                           -->
+        <!-- ================================================= -->
+
+        <main
+            class="content"
+            id="content"
+        ></main>
 
 
     </div>
-
 
 </div>
 
@@ -511,9 +1093,28 @@
 <script>
 
 
-/* ========================= */
-/* LOGIN                     */
-/* ========================= */
+/* ================================================= */
+/* SUPABASE                                           */
+/* ================================================= */
+
+const SUPABASE_URL =
+    "https://sdlrttsluqtuupapeymt.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_2lRZ9Tw11ORGQEWeWVDqYg_x665jjdU";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+
+/* ================================================= */
+/* LOGIN                                             */
+/* ================================================= */
 
 const BENUTZERNAME = "REPUBLIKADMIN";
 
@@ -522,12 +1123,10 @@ const PASSWORT = "ALLFDL1574";
 
 function login() {
 
+    const username =
+        document.getElementById("username").value.trim();
 
-    let username =
-        document.getElementById("username").value;
-
-
-    let password =
+    const password =
         document.getElementById("password").value;
 
 
@@ -536,45 +1135,52 @@ function login() {
         password === PASSWORT
     ) {
 
-
         document.getElementById("login").style.display =
             "none";
-
 
         document.getElementById("system").style.display =
             "block";
 
-
         zeigeStartseite();
-
 
     } else {
 
-
         document.getElementById("error").innerText =
             "ZUGRIFF VERWEIGERT";
-
 
     }
 
 }
 
 
+/* ENTER = LOGIN */
 
-/* ========================= */
-/* LOGOUT                    */
-/* ========================= */
+document.addEventListener("keydown", function(event) {
+
+    if (
+        event.key === "Enter" &&
+        document.getElementById("login").style.display !== "none"
+    ) {
+
+        login();
+
+    }
+
+});
+
+
+
+/* ================================================= */
+/* LOGOUT                                            */
+/* ================================================= */
 
 function logout() {
-
 
     document.getElementById("system").style.display =
         "none";
 
-
     document.getElementById("login").style.display =
-        "block";
-
+        "flex";
 
     document.getElementById("username").value = "";
 
@@ -582,31 +1188,209 @@ function logout() {
 
     document.getElementById("error").innerText = "";
 
+}
+
+
+
+/* ================================================= */
+/* PERSONENDATEN                                     */
+/* ================================================= */
+
+const personen = [
+
+    {
+        name: "Maximillian Pütz",
+        nummer: "0001"
+    },
+
+    {
+        name: "Linus Gabriel Ersin Oster",
+        nummer: "0002"
+    },
+
+    {
+        name: "Leon Wallenfang",
+        nummer: "0003"
+    },
+
+    {
+        name: "Oskar Michels",
+        nummer: "0004"
+    },
+
+    {
+        name: "Tammo Kress",
+        nummer: "0005"
+    },
+
+    {
+        name: "Albert Wünscher",
+        nummer: "0006"
+    },
+
+    {
+        name: "Lukas Hilberath",
+        nummer: "0007"
+    },
+
+    {
+        name: "Diego Fernando Schaefer",
+        nummer: "0008"
+    }
+
+];
+
+
+function personenNummer(name) {
+
+    const person =
+        personen.find(
+            p => p.name === name
+        );
+
+    return person
+        ? person.nummer
+        : "9999";
 
 }
 
 
 
-/* ========================= */
-/* STARTSEITE                */
-/* ========================= */
+/* ================================================= */
+/* STARTSEITE                                        */
+/* ================================================= */
 
-function zeigeStartseite() {
+async function zeigeStartseite() {
+
+    const {
+        data: fahndungen,
+        error
+    } = await supabaseClient
+        .from("fahndungen")
+        .select("*");
+
+
+    const anzahlFahndungen =
+        error
+            ? 0
+            : fahndungen.length;
 
 
     document.getElementById("content").innerHTML = `
 
         <div class="document">
 
-            <h1>
-                INTERNES AKTENSYSTEM
-            </h1>
+            <div class="document-header">
 
-            <p>
-                Willkommen im zentralen
-                Aktenverwaltungssystem der
-                Republik Arstotzka.
-            </p>
+                <h1>
+                    ZENTRALES AKTENREGISTER
+                </h1>
+
+                <p>
+                    Republik Arstotzka
+                </p>
+
+            </div>
+
+
+            <div class="warning-box">
+
+                <strong>
+                    INTERNES SYSTEM
+                </strong>
+
+                <br><br>
+
+                Zugriff nur für autorisiertes
+                Personal der Republik Arstotzka.
+
+            </div>
+
+
+            <div class="dashboard-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Personenakten
+                    </div>
+
+                    <div class="stat-number">
+                        ${personen.length}
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Fahndungen
+                    </div>
+
+                    <div class="stat-number">
+                        ${anzahlFahndungen}
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        System
+                    </div>
+
+                    <div class="stat-number">
+                        OK
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Sicherheitsstufe
+                    </div>
+
+                    <div class="stat-number">
+                        III
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <h2>
+                SCHNELLZUGRIFF
+            </h2>
+
+
+            <div class="field">
+
+                <button
+                    onclick="zeigePersonen()"
+                >
+                    PERSONENAKTEN ÖFFNEN
+                </button>
+
+            </div>
+
+
+            <div class="field">
+
+                <button
+                    onclick="zeigeFahndung()"
+                >
+                    FAHNDUNGSLISTE ÖFFNEN
+                </button>
+
+            </div>
+
 
             <div class="field">
 
@@ -614,35 +1398,9 @@ function zeigeStartseite() {
                     SYSTEMSTATUS:
                 </strong>
 
-                <span class="success">
-                    AKTIV
+                <span class="badge badge-success">
+                    ONLINE
                 </span>
-
-            </div>
-
-
-            <div class="field">
-
-                <strong>
-                    ZUGRIFF:
-                </strong>
-
-                AUTORISIERT
-
-            </div>
-
-
-            <div class="field">
-
-                <strong>
-                    VERFÜGBARE BEREICHE:
-                </strong>
-
-                <br><br>
-
-                Personenakten<br>
-
-                Fahndung
 
             </div>
 
@@ -654,210 +1412,258 @@ function zeigeStartseite() {
 
 
 
-/* ========================= */
-/* PERSONENAKTEN             */
-/* ========================= */
+/* ================================================= */
+/* PERSONENAKTEN                                     */
+/* ================================================= */
 
 function zeigePersonen() {
-
 
     document.getElementById("content").innerHTML = `
 
         <div class="document">
 
-            <h1>
-                PERSONENAKTEN
-            </h1>
+            <div class="document-header">
 
-            <p>
-                Wählen Sie eine Akte aus:
-            </p>
+                <h1>
+                    PERSONENAKTEN
+                </h1>
 
-
-            <div class="field">
-
-                <button
-                    class="person-button"
-                    onclick="zeigeAkte('Maximillian Pütz')">
-
-                    Maximillian Pütz
-
-                </button>
+                <p>
+                    Zentrales Personenregister
+                </p>
 
             </div>
 
 
-            <div class="field">
+            <div class="search-box">
 
-                <button
-                    class="person-button"
-                    onclick="zeigeAkte('Linus Gabriel Ersin Oster')">
-
-                    Linus Gabriel Ersin Oster
-
-                </button>
-
-            </div>
-
-
-            <div class="field">
-
-                <button
-                    class="person-button"
-                    onclick="zeigeAkte('Leon Wallenfang')">
-
-                    Leon Wallenfang
-
-                </button>
+                <input
+                    id="personSearch"
+                    type="text"
+                    placeholder="Person suchen..."
+                    oninput="suchePersonen()"
+                >
 
             </div>
 
 
-            <div class="field">
-
-                <button
-                    class="person-button"
-                    onclick="zeigeAkte('Oskar Michels')">
-
-                    Oskar Michels
-
-                </button>
-
-            </div>
-
-
-            <div class="field">
-
-                <button
-                    class="person-button"
-                    onclick="zeigeAkte('Tammo Kress')">
-
-                    Tammo Kress
-
-                </button>
-
-            </div>
-
-
-            <div class="field">
-
-                <button
-                    class="person-button"
-                    onclick="zeigeAkte('Albert Wünscher')">
-
-                    Albert Wünscher
-
-                </button>
-
-            </div>
-
-
-            <div class="field">
-
-                <button
-                    class="person-button"
-                    onclick="zeigeAkte('Lukas Hilberath')">
-
-                    Lukas Hilberath
-
-                </button>
-
-            </div>
-
-
-            <div class="field">
-
-                <button
-                    class="person-button"
-                    onclick="zeigeAkte('Diego Fernando Schaefer')">
-
-                    Diego Fernando Schaefer
-
-                </button>
-
-            </div>
-
+            <div
+                id="personenListe"
+                class="person-list"
+            ></div>
 
         </div>
 
     `;
 
+
+    renderePersonen(personen);
+
 }
 
 
 
-/* ========================= */
-/* PERSONENAKTE              */
-/* ========================= */
+function renderePersonen(liste) {
 
-function zeigeAkte(name) {
-
-
-    let fahndungen =
-        JSON.parse(
-            localStorage.getItem("fahndungen")
-        ) || [];
+    const container =
+        document.getElementById("personenListe");
 
 
-    let personenFahndungen =
-        fahndungen.filter(
-            f => f.name === name
-        );
+    if (liste.length === 0) {
 
-
-    let fahndungsHTML = "";
-
-
-    if (personenFahndungen.length === 0) {
-
-
-        fahndungsHTML = `
+        container.innerHTML = `
 
             <div class="field">
 
-                <span>
-                    Keine Fahndung eingetragen.
-                </span>
+                Keine Person gefunden.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    liste.forEach(person => {
+
+        const div =
+            document.createElement("div");
+
+
+        div.className =
+            "person-card";
+
+
+        div.onclick = function() {
+
+            zeigeAkte(person.name);
+
+        };
+
+
+        div.innerHTML = `
+
+            <div class="person-name">
+
+                ${person.name}
+
+            </div>
+
+            <div class="person-id">
+
+                AKTENNUMMER:
+                AR-${person.nummer}
 
             </div>
 
         `;
 
 
+        container.appendChild(div);
+
+    });
+
+}
+
+
+
+function suchePersonen() {
+
+    const suchtext =
+        document
+            .getElementById("personSearch")
+            .value
+            .toLowerCase();
+
+
+    const ergebnis =
+        personen.filter(
+            person =>
+                person.name
+                    .toLowerCase()
+                    .includes(suchtext)
+        );
+
+
+    renderePersonen(ergebnis);
+
+}
+
+
+
+/* ================================================= */
+/* PERSONENAKTE                                      */
+/* ================================================= */
+
+async function zeigeAkte(name) {
+
+    const {
+        data: fahndungen,
+        error
+    } = await supabaseClient
+
+        .from("fahndungen")
+
+        .select("*")
+
+        .eq("name", name)
+
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Die Akte konnte nicht geladen werden:\n" +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    let fahndungsHTML = "";
+
+
+    if (
+        !fahndungen ||
+        fahndungen.length === 0
+    ) {
+
+        fahndungsHTML = `
+
+            <div class="field">
+
+                <span class="badge badge-success">
+                    KEINE FAHNDUNG
+                </span>
+
+                <br><br>
+
+                Für diese Person liegt derzeit
+                keine aktive Fahndung vor.
+
+            </div>
+
+        `;
+
     } else {
 
+        fahndungen.forEach(f => {
 
-        personenFahndungen.forEach(f => {
+            const datum =
+                f.created_at
+                    ? new Date(
+                        f.created_at
+                    ).toLocaleString(
+                        "de-DE"
+                    )
+                    : "Unbekannt";
 
 
             fahndungsHTML += `
 
-                <div class="field">
+                <div class="fahndung-card">
 
                     <h3>
-                        FAHNDUNG
+                        ${escapeHTML(f.grund)}
                     </h3>
 
-                    <strong>
-                        Grund:
-                    </strong>
+                    <div class="fahndung-meta">
 
-                    ${f.grund}
+                        EINGETRAGEN:
+                        ${datum}
 
-                    <br><br>
+                    </div>
 
-                    <strong>
-                        Status:
-                    </strong>
 
-                    <span class="warning">
-                        ${f.status}
+                    <span class="badge badge-danger">
+
+                        ${escapeHTML(f.status)}
+
                     </span>
 
+
                     <br><br>
 
+
                     <button
-                        onclick="loescheFahndung(${f.id}, '${name}')">
+                        class="danger small"
+                        onclick="loescheFahndung(${f.id}, '${escapeAttribute(name)}')"
+                    >
 
                         FAHNDUNG LÖSCHEN
 
@@ -878,38 +1684,50 @@ function zeigeAkte(name) {
         <div class="document">
 
 
-            <h1>
-                PERSONENAKTE
-            </h1>
+            <div class="document-header">
 
+                <h1>
+                    PERSONENAKTE
+                </h1>
 
-            <div class="field">
-
-                <strong>
-                    Name:
-                </strong>
-
-                ${name}
+                <p>
+                    REPUBLIK ARSTOTZKA
+                </p>
 
             </div>
 
 
             <div class="field">
 
-                <strong>
-                    Aktennummer:
-                </strong>
+                <div class="field-title">
+                    Vollständiger Name
+                </div>
 
-                AR-${personenNummer(name)}
+                <div class="field-value">
+                    ${escapeHTML(name)}
+                </div>
 
             </div>
 
 
             <div class="field">
 
-                <strong>
-                    Staatsangehörigkeit:
-                </strong>
+                <div class="field-title">
+                    Aktennummer
+                </div>
+
+                <div class="field-value">
+                    AR-${personenNummer(name)}
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <div class="field-title">
+                    Staatsangehörigkeit
+                </div>
 
                 Arstotzkanisch
 
@@ -918,27 +1736,27 @@ function zeigeAkte(name) {
 
             <div class="field">
 
-                <strong>
-                    Status:
-                </strong>
+                <div class="field-title">
+                    Aktenstatus
+                </div>
 
-                Aktiv
+                <span class="badge badge-success">
+                    AKTIV
+                </span>
 
             </div>
 
 
-
             <h2>
-                FAHNDUNG
+                FAHNDUNGSSTATUS
             </h2>
 
 
             ${fahndungsHTML}
 
 
-
             <h2>
-                NEUE FAHNDUNG EINTRAGEN
+                NEUE FAHNDUNG
             </h2>
 
 
@@ -946,19 +1764,19 @@ function zeigeAkte(name) {
 
 
                 <label>
-                    Fahndungsgrund:
+                    Fahndungsgrund
                 </label>
 
 
                 <input
-                    type="text"
                     id="fahndungsgrund"
+                    type="text"
                     placeholder="z.B. Schwerer Diebstahl"
                 >
 
 
                 <label>
-                    Status:
+                    Fahndungsstatus
                 </label>
 
 
@@ -976,11 +1794,38 @@ function zeigeAkte(name) {
                         Zur Festnahme ausgeschrieben
                     </option>
 
+                    <option value="Staatssicherheitsrelevant">
+                        Staatssicherheitsrelevant
+                    </option>
+
+                </select>
+
+
+                <label>
+                    Priorität
+                </label>
+
+
+                <select id="fahndungsprioritaet">
+
+                    <option value="Normal">
+                        Normal
+                    </option>
+
+                    <option value="Hoch">
+                        Hoch
+                    </option>
+
+                    <option value="Kritisch">
+                        Kritisch
+                    </option>
+
                 </select>
 
 
                 <button
-                    onclick="fuegeFahndungHinzu('${name}')">
+                    onclick="fuegeFahndungHinzu('${escapeAttribute(name)}')"
+                >
 
                     FAHNDUNG EINTRAGEN
 
@@ -990,8 +1835,37 @@ function zeigeAkte(name) {
             </div>
 
 
+            <h2>
+                AKTENVERMERK
+            </h2>
 
-            <button onclick="zeigePersonen()">
+
+            <div class="field">
+
+                <textarea
+                    id="aktennotiz"
+                    placeholder="Interne Notiz zur Person..."
+                ></textarea>
+
+
+                <button
+                    onclick="speichereNotiz('${escapeAttribute(name)}')"
+                >
+
+                    NOTIZ SPEICHERN
+
+                </button>
+
+            </div>
+
+
+            <br>
+
+
+            <button
+                class="secondary"
+                onclick="zeigePersonen()"
+            >
 
                 ← ZURÜCK ZU DEN PERSONENAKTEN
 
@@ -1006,94 +1880,77 @@ function zeigeAkte(name) {
 
 
 
-/* ========================= */
-/* AKTENNUMMERN              */
-/* ========================= */
+/* ================================================= */
+/* FAHNDUNG EINTRAGEN                                */
+/* ================================================= */
 
-function personenNummer(name) {
+async function fuegeFahndungHinzu(name) {
 
-
-    const nummern = {
-
-        "Maximillian Pütz": "0001",
-
-        "Linus Gabriel Ersin Oster": "0002",
-
-        "Leon Wallenfang": "0003",
-
-        "Oskar Michels": "0004",
-
-        "Tammo Kress": "0005",
-
-        "Albert Wünscher": "0006",
-
-        "Lukas Hilberath": "0007",
-
-        "Diego Fernando Schaefer": "0008"
-
-    };
+    const grund =
+        document
+            .getElementById("fahndungsgrund")
+            .value
+            .trim();
 
 
-    return nummern[name] || "9999";
-
-}
-
-
-
-/* ========================= */
-/* FAHNDUNG HINZUFÜGEN       */
-/* ========================= */
-
-function fuegeFahndungHinzu(name) {
+    const status =
+        document
+            .getElementById("fahndungsstatus")
+            .value;
 
 
-    let grund =
-        document.getElementById(
-            "fahndungsgrund"
-        ).value;
+    const prioritaet =
+        document
+            .getElementById("fahndungsprioritaet")
+            .value;
 
 
-    let status =
-        document.getElementById(
-            "fahndungsstatus"
-        ).value;
-
-
-    if (grund.trim() === "") {
-
+    if (!grund) {
 
         alert(
             "Bitte einen Fahndungsgrund eingeben."
         );
-
 
         return;
 
     }
 
 
-    let fahndungen =
-        JSON.parse(
-            localStorage.getItem("fahndungen")
-        ) || [];
+    const { error } =
+        await supabaseClient
+
+            .from("fahndungen")
+
+            .insert({
+
+                name: name,
+
+                grund: grund,
+
+                status:
+                    status +
+                    " | Priorität: " +
+                    prioritaet
+
+            });
 
 
-    fahndungen.push({
+    if (error) {
 
-        id: Date.now(),
+        console.error(error);
 
-        name: name,
+        alert(
+            "Fehler beim Eintragen:\n" +
+            error.message
+        );
 
-        grund: grund,
+        return;
 
-        status: status
-
-    });
+    }
 
 
-    localStorage.setItem(
-        "fahndungen",
-        JSON.stringify(fahndungen)
+    alert(
+        "Fahndung erfolgreich eingetragen."
     );
 
 
@@ -1103,29 +1960,47 @@ function fuegeFahndungHinzu(name) {
 
 
 
-/* ========================= */
-/* FAHNDUNG LÖSCHEN          */
-/* ========================= */
+/* ================================================= */
+/* FAHNDUNG LÖSCHEN                                  */
+/* ================================================= */
 
-function loescheFahndung(id, name) {
+async function loescheFahndung(id, name) {
 
-
-    let fahndungen =
-        JSON.parse(
-            localStorage.getItem("fahndungen")
-        ) || [];
-
-
-    fahndungen =
-        fahndungen.filter(
-            f => f.id !== id
+    const bestaetigt =
+        confirm(
+            "Soll diese Fahndung wirklich gelöscht werden?"
         );
 
 
-    localStorage.setItem(
-        "fahndungen",
-        JSON.stringify(fahndungen)
-    );
+    if (!bestaetigt) {
+
+        return;
+
+    }
+
+
+    const { error } =
+        await supabaseClient
+
+            .from("fahndungen")
+
+            .delete()
+
+            .eq("id", id);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Fehler beim Löschen:\n" +
+            error.message
+        );
+
+        return;
+
+    }
 
 
     zeigeAkte(name);
@@ -1134,87 +2009,142 @@ function loescheFahndung(id, name) {
 
 
 
-/* ========================= */
-/* FAHNDUNGSLISTE            */
-/* ========================= */
+/* ================================================= */
+/* FAHNDUNGSLISTE                                    */
+/* ================================================= */
 
-function zeigeFahndung() {
+async function zeigeFahndung() {
+
+    const {
+        data: fahndungen,
+        error
+    } = await supabaseClient
+
+        .from("fahndungen")
+
+        .select("*")
+
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
 
 
-    let fahndungen =
-        JSON.parse(
-            localStorage.getItem("fahndungen")
-        ) || [];
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Fahndungen konnten nicht geladen werden:\n" +
+            error.message
+        );
+
+        return;
+
+    }
 
 
     let liste = "";
 
 
-    if (fahndungen.length === 0) {
-
+    if (
+        !fahndungen ||
+        fahndungen.length === 0
+    ) {
 
         liste = `
 
             <div class="field">
 
-                <span class="success">
-                    AKTUELL KEINE PERSONEN ZUR
-                    FAHNDUNG AUSGESCHRIEBEN.
+                <span class="badge badge-success">
+                    KEINE AKTIVEN FAHNDUNGEN
                 </span>
+
+                <br><br>
+
+                Derzeit sind keine Personen
+                zur Fahndung ausgeschrieben.
 
             </div>
 
         `;
-
 
     } else {
 
 
         fahndungen.forEach(f => {
 
+            const datum =
+                f.created_at
+                    ? new Date(
+                        f.created_at
+                    ).toLocaleString(
+                        "de-DE"
+                    )
+                    : "Unbekannt";
+
 
             liste += `
 
-                <div class="field">
+                <div class="fahndung-card">
+
 
                     <h3>
-                        ${f.name}
+                        ${escapeHTML(f.name)}
                     </h3>
 
 
+                    <div class="fahndung-meta">
+
+                        AKTENNUMMER:
+                        AR-${personenNummer(f.name)}
+
+                        <br>
+
+                        EINGETRAGEN:
+                        ${datum}
+
+                    </div>
+
+
                     <strong>
-                        Aktennummer:
+                        GRUND:
                     </strong>
 
-                    AR-${personenNummer(f.name)}
+                    <br>
+
+                    ${escapeHTML(f.grund)}
 
                     <br><br>
 
 
-                    <strong>
-                        Fahndungsgrund:
-                    </strong>
+                    <span class="badge badge-danger">
 
-                    ${f.grund}
+                        ${escapeHTML(f.status)}
 
-                    <br><br>
-
-
-                    <strong>
-                        Status:
-                    </strong>
-
-                    <span class="warning">
-                        ${f.status}
                     </span>
+
 
                     <br><br>
 
 
                     <button
-                        onclick="zeigeAkte('${f.name}')">
+                        onclick="zeigeAkte('${escapeAttribute(f.name)}')"
+                    >
 
                         PERSONENAKTE ÖFFNEN
+
+                    </button>
+
+
+                    <button
+                        class="danger"
+                        onclick="loescheFahndung(${f.id}, '${escapeAttribute(f.name)}')"
+                    >
+
+                        LÖSCHEN
 
                     </button>
 
@@ -1234,14 +2164,31 @@ function zeigeFahndung() {
         <div class="document">
 
 
-            <h1>
-                FAHNDUNG
-            </h1>
+            <div class="document-header">
+
+                <h1>
+                    FAHNDUNGSREGISTER
+                </h1>
+
+                <p>
+                    Zentrale Fahndungsübersicht
+                </p>
+
+            </div>
 
 
-            <p>
-                AKTUELLE PERSONENFAHNDUNGEN
-            </p>
+            <div class="warning-box">
+
+                <strong>
+                    AMTLICHE FAHNDUNGSDATEN
+                </strong>
+
+                <br><br>
+
+                Alle nachfolgenden Einträge sind
+                interne RP-Datensätze.
+
+            </div>
 
 
             ${liste}
@@ -1254,8 +2201,232 @@ function zeigeFahndung() {
 }
 
 
-</script>
 
+/* ================================================= */
+/* STATISTIK                                         */
+/* ================================================= */
+
+async function zeigeStatistik() {
+
+    const {
+        data: fahndungen,
+        error
+    } = await supabaseClient
+
+        .from("fahndungen")
+
+        .select("*");
+
+
+    if (error) {
+
+        alert(
+            "Statistik konnte nicht geladen werden."
+        );
+
+        return;
+
+    }
+
+
+    const normal =
+        fahndungen.filter(
+            f =>
+                !f.status.includes("Kritisch")
+        ).length;
+
+
+    const kritisch =
+        fahndungen.filter(
+            f =>
+                f.status.includes("Kritisch")
+        ).length;
+
+
+    document.getElementById("content").innerHTML = `
+
+        <div class="document">
+
+
+            <div class="document-header">
+
+                <h1>
+                    SYSTEMSTATISTIK
+                </h1>
+
+                <p>
+                    Interne Auswertung
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Personen
+                    </div>
+
+                    <div class="stat-number">
+                        ${personen.length}
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Fahndungen
+                    </div>
+
+                    <div class="stat-number">
+                        ${fahndungen.length}
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Normale Fälle
+                    </div>
+
+                    <div class="stat-number">
+                        ${normal}
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-title">
+                        Kritische Fälle
+                    </div>
+
+                    <div class="stat-number">
+                        ${kritisch}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="field">
+
+                <strong>
+                    SYSTEM:
+                </strong>
+
+                ONLINE
+
+            </div>
+
+
+            <div class="field">
+
+                <strong>
+                    DATENBANK:
+                </strong>
+
+                SUPABASE
+
+            </div>
+
+
+            <div class="field">
+
+                <strong>
+                    AKTENREGISTER:
+                </strong>
+
+                AKTIV
+
+            </div>
+
+
+        </div>
+
+    `;
+
+}
+
+
+
+/* ================================================= */
+/* NOTIZEN                                           */
+/* ================================================= */
+
+function speichereNotiz(name) {
+
+    const notiz =
+        document
+            .getElementById("aktennotiz")
+            .value
+            .trim();
+
+
+    if (!notiz) {
+
+        alert(
+            "Bitte zuerst eine Notiz eingeben."
+        );
+
+        return;
+
+    }
+
+
+    alert(
+        "Notiz wurde für diese Sitzung vorgemerkt.\n\n" +
+        "Für eine dauerhafte Speicherung müssen wir " +
+        "noch eine eigene Notiz-Tabelle in Supabase anlegen."
+    );
+
+}
+
+
+
+/* ================================================= */
+/* SICHERHEIT                                       */
+/* ================================================= */
+
+function escapeHTML(text) {
+
+    return String(text)
+
+        .replaceAll("&", "&amp;")
+
+        .replaceAll("<", "&lt;")
+
+        .replaceAll(">", "&gt;")
+
+        .replaceAll('"', "&quot;")
+
+        .replaceAll("'", "&#039;");
+
+}
+
+
+function escapeAttribute(text) {
+
+    return String(text)
+
+        .replaceAll("\\", "\\\\")
+
+        .replaceAll("'", "\\'");
+
+}
+
+
+</script>
 
 </body>
 
