@@ -366,21 +366,82 @@ function zeigePersonen() {
 
         <div class="document">
 
-            <h1>Personenakte</h1>
+            <h1>PERSONENAKTEN</h1>
+
+            <p>
+                Wählen Sie eine Akte aus:
+            </p>
 
             <div class="field">
-                <strong>Aktennummer:</strong>
-                AR-2026-001
+                <button onclick="zeigeAkte('Maximillian Pütz')">
+                    Maximillian Pütz
+                </button>
             </div>
+
+            <div class="field">
+                <button onclick="zeigeAkte('Linus Gabriel Ersin Oster')">
+                    Linus Gabriel Ersin Oster
+                </button>
+            </div>
+
+            <div class="field">
+                <button onclick="zeigeAkte('Leon Wallenfang')">
+                    Leon Wallenfang
+                </button>
+            </div>
+
+            <div class="field">
+                <button onclick="zeigeAkte('Oskar Michels')">
+                    Oskar Michels
+                </button>
+            </div>
+
+            <div class="field">
+                <button onclick="zeigeAkte('Tammo Kress')">
+                    Tammo Kress
+                </button>
+            </div>
+
+            <div class="field">
+                <button onclick="zeigeAkte('Albert Wünscher')">
+                    Albert Wünscher
+                </button>
+            </div>
+
+            <div class="field">
+                <button onclick="zeigeAkte('Lukas Hilberath')">
+                    Lukas Hilberath
+                </button>
+            </div>
+
+            <div class="field">
+                <button onclick="zeigeAkte('Diego Fernando Schaefer')">
+                    Diego Fernando Schaefer
+                </button>
+            </div>
+
+        </div>
+
+    `;
+}
+
+
+function zeigeAkte(name) {
+
+    document.getElementById("content").innerHTML = `
+
+        <div class="document">
+
+            <h1>PERSONENAKTE</h1>
 
             <div class="field">
                 <strong>Name:</strong>
-                Max Mustermann
+                ${name}
             </div>
 
             <div class="field">
-                <strong>Geburtsdatum:</strong>
-                12.03.1995
+                <strong>Aktennummer:</strong>
+                AR-${Math.floor(Math.random() * 9000) + 1000}
             </div>
 
             <div class="field">
@@ -398,10 +459,15 @@ function zeigePersonen() {
                 Keine Einträge vorhanden.
             </div>
 
+            <button onclick="zeigePersonen()">
+                ← ZURÜCK ZU DEN PERSONENAKTEN
+            </button>
+
         </div>
 
     `;
 }
+
 
 
 /* ========================= */
