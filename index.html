@@ -1,0 +1,498 @@
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Akte der Arstotzka Republik</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #202020;
+            font-family: Arial, sans-serif;
+            color: #222;
+        }
+
+        /* LOGIN */
+
+        #login {
+            width: 420px;
+            margin: 80px auto;
+            background: #d6d0c4;
+            padding: 25px;
+            border: 4px solid #111;
+            box-shadow: 8px 8px 0px #111;
+        }
+
+        #login img {
+            width: 100%;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 25px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin-top: 5px;
+            background: #eee9dc;
+            border: 2px solid #333;
+            font-size: 16px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #333;
+            color: white;
+            border: 0;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #555;
+        }
+
+        #error {
+            color: #a00000;
+            font-weight: bold;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+
+        /* SYSTEM */
+
+        #system {
+            display: none;
+        }
+
+        .topbar {
+            background: #171717;
+            color: white;
+            padding: 15px 25px;
+            border-bottom: 4px solid #000;
+        }
+
+        .topbar h2 {
+            margin: 0;
+        }
+
+        .topbar span {
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .container {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #292929;
+            padding: 20px;
+        }
+
+        .sidebar button {
+            width: 100%;
+            margin-top: 10px;
+            text-align: left;
+            background: #3b3b3b;
+        }
+
+        .sidebar button:hover {
+            background: #555;
+        }
+
+        .content {
+            flex: 1;
+            padding: 30px;
+            background: #c9c2b5;
+        }
+
+        .document {
+            max-width: 900px;
+            background: #e7e1d5;
+            border: 3px solid #222;
+            padding: 25px;
+            box-shadow: 7px 7px 0px #333;
+        }
+
+        .document h1 {
+            text-align: left;
+            border-bottom: 3px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .field {
+            background: #d5cfc3;
+            border: 1px solid #888;
+            padding: 12px;
+            margin: 10px 0;
+        }
+
+        .field strong {
+            display: inline-block;
+            width: 180px;
+        }
+
+        .status {
+            display: inline-block;
+            background: #555;
+            color: white;
+            padding: 7px 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+
+<!-- ========================= -->
+<!-- LOGIN                     -->
+<!-- ========================= -->
+
+<div id="login">
+
+    <!-- Dein Bild muss arstotzka.jpg heißen -->
+    <img src="arstotzka.jpg" alt="Glory to Arstotzka">
+
+    <h1>
+        Die Akte der<br>
+        Arstotzka Republik
+    </h1>
+
+    <label>Benutzername</label>
+    <input
+        type="text"
+        id="username"
+        placeholder="Benutzername"
+    >
+
+    <label>Passwort</label>
+    <input
+        type="password"
+        id="password"
+        placeholder="Passwort"
+    >
+
+    <button onclick="login()">
+        ANMELDEN
+    </button>
+
+    <div id="error"></div>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- HAUPTSYSTEM               -->
+<!-- ========================= -->
+
+<div id="system">
+
+    <div class="topbar">
+
+        <h2>ARSTOTZKA REPUBLIK</h2>
+
+        <span>
+            INTERNES AKTENSYSTEM
+        </span>
+
+    </div>
+
+
+    <div class="container">
+
+        <!-- SIDEBAR -->
+
+        <div class="sidebar">
+
+            <button onclick="zeigeStartseite()">
+                Startseite
+            </button>
+
+            <button onclick="zeigePersonen()">
+                Personenakten
+            </button>
+
+            <button onclick="zeigeFahrzeuge()">
+                Fahrzeugregister
+            </button>
+
+            <button onclick="zeigeFahndung()">
+                Fahndung
+            </button>
+
+            <button onclick="logout()">
+                Abmelden
+            </button>
+
+        </div>
+
+
+        <!-- INHALT -->
+
+        <div class="content" id="content">
+
+            <div class="document">
+
+                <h1>
+                    Willkommen
+                </h1>
+
+                <p>
+                    Willkommen im internen Aktensystem
+                    der Arstotzka Republik.
+                </p>
+
+                <p>
+                    Wählen Sie links einen Bereich aus.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ========================= */
+/* LOGIN DATEN                */
+/* ========================= */
+
+const BENUTZERNAME = "REPUBLIKADMIN";
+const PASSWORT = "ALLFDL1574";
+
+
+/* ========================= */
+/* LOGIN                     */
+/* ========================= */
+
+function login() {
+
+    let username =
+        document.getElementById("username").value;
+
+    let password =
+        document.getElementById("password").value;
+
+
+    if (
+        username === BENUTZERNAME &&
+        password === PASSWORT
+    ) {
+
+        document.getElementById("login").style.display = "none";
+
+        document.getElementById("system").style.display = "block";
+
+    } else {
+
+        document.getElementById("error").innerText =
+            "ZUGRIFF VERWEIGERT";
+
+    }
+}
+
+
+/* ========================= */
+/* STARTSEITE                 */
+/* ========================= */
+
+function zeigeStartseite() {
+
+    document.getElementById("content").innerHTML = `
+
+        <div class="document">
+
+            <h1>Willkommen</h1>
+
+            <p>
+                Sie befinden sich im internen
+                Aktensystem der Arstotzka Republik.
+            </p>
+
+            <p>
+                Alle Informationen sind vertraulich.
+            </p>
+
+            <div class="field">
+                <strong>Sicherheitsstufe:</strong>
+                INTERN
+            </div>
+
+            <div class="field">
+                <strong>Systemstatus:</strong>
+                <span class="status">ONLINE</span>
+            </div>
+
+        </div>
+
+    `;
+}
+
+
+/* ========================= */
+/* PERSONENAKTEN             */
+/* ========================= */
+
+function zeigePersonen() {
+
+    document.getElementById("content").innerHTML = `
+
+        <div class="document">
+
+            <h1>Personenakte</h1>
+
+            <div class="field">
+                <strong>Aktennummer:</strong>
+                AR-2026-001
+            </div>
+
+            <div class="field">
+                <strong>Name:</strong>
+                Max Mustermann
+            </div>
+
+            <div class="field">
+                <strong>Geburtsdatum:</strong>
+                12.03.1995
+            </div>
+
+            <div class="field">
+                <strong>Staatsangehörigkeit:</strong>
+                Arstotzkanisch
+            </div>
+
+            <div class="field">
+                <strong>Status:</strong>
+                Aktiv
+            </div>
+
+            <div class="field">
+                <strong>Bemerkungen:</strong>
+                Keine Einträge vorhanden.
+            </div>
+
+        </div>
+
+    `;
+}
+
+
+/* ========================= */
+/* FAHRZEUGE                 */
+/* ========================= */
+
+function zeigeFahrzeuge() {
+
+    document.getElementById("content").innerHTML = `
+
+        <div class="document">
+
+            <h1>Fahrzeugregister</h1>
+
+            <div class="field">
+                <strong>Kennzeichen:</strong>
+                AR-1234
+            </div>
+
+            <div class="field">
+                <strong>Fahrzeug:</strong>
+                Trabant 601
+            </div>
+
+            <div class="field">
+                <strong>Halter:</strong>
+                Max Mustermann
+            </div>
+
+            <div class="field">
+                <strong>Status:</strong>
+                Zugelassen
+            </div>
+
+        </div>
+
+    `;
+}
+
+
+/* ========================= */
+/* FAHNDUNG                  */
+/* ========================= */
+
+function zeigeFahndung() {
+
+    document.getElementById("content").innerHTML = `
+
+        <div class="document">
+
+            <h1>Fahndung</h1>
+
+            <div class="field">
+                <strong>Gesuchte Personen:</strong>
+                0
+            </div>
+
+            <div class="field">
+                <strong>Fahrzeugfahndungen:</strong>
+                0
+            </div>
+
+            <p>
+                Derzeit liegen keine aktiven
+                Fahndungen vor.
+            </p>
+
+        </div>
+
+    `;
+}
+
+
+/* ========================= */
+/* ABMELDEN                  */
+/* ========================= */
+
+function logout() {
+
+    document.getElementById("system").style.display = "none";
+
+    document.getElementById("login").style.display = "block";
+
+    document.getElementById("username").value = "";
+
+    document.getElementById("password").value = "";
+
+}
+
+</script>
+
+</body>
+</html>
+```
